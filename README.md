@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+# fconverter
+A python file conversion tool 
+>>>>>>> new-branch
 `This is a Linux command-line interface (CLI) application that coverts documents from one format to another.
 
 ## Installation
