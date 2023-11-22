@@ -49,12 +49,13 @@ Replace `[options]` with the appropriate command-line options based on the funct
 1. Example command 1:
 
    ```shell
-   Fconverter 1 example.docx example.pdf
+   fconverter 1 example.docx example.pdf
    ```
 
   This promt parses 1 as the operation and example.docx as the file(stdin) to be converted to example.pdf (stdout)
 
-```Note that to run undertake any conversion you must be in the directory where file to be converted is located, otherwise you definetely sahall encounter an error```
+Note that to run undertake any conversion you must be in the directory where file to be converted is located, otherwise you definetely sahall encounter an error
+
 ## Contributing
 
 Contributions are welcome! If you encounter any issues or have suggestions for improvements, please open an issue or submit a pull request.
@@ -62,8 +63,7 @@ Contributions are welcome! If you encounter any issues or have suggestions for i
 ## License
 
 This project is an open source software.
-```
+
 
 Feel free to modify and customize this template according to your specific project requirements and add any additional sections or information that you think would be helpful for users.
-# skye-cyber
-# skye-cyber
+
