@@ -17,7 +17,6 @@ setup(
         'pdf2docx',
         'pdfminer.six',
         'xml.sax.saxutils',
-        'traceback',
         'python-docx',
         'python-pptx'
     ],
