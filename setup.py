@@ -8,17 +8,18 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     entry_points={
-        'console_scripts':[
-        "fconverter=fconverter:main"],
+        'console_scripts': [
+            "fconverter=fconverter:main"],
     },
     python_requires='>=3.6',
     install_requires=[
-    'argparse',
-    'pdf2docx',
-    'pdfminer.six',
-    'PyPDF2',
-    'python-docx',
-    'python-pptx'
+        'argparse',
+        'pdf2docx',
+        'pdfminer.six',
+        'xml.sax.saxutils',
+        'traceback',
+        'python-docx',
+        'python-pptx'
     ],
     include_package_data=True,
     license="MIT",

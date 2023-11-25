@@ -1,6 +1,7 @@
 argparse
 pdf2docx
 pdfminer.six
-PyPDF2
+traceback
+xml.sax.saxutils
 python-docx
 python-pptx

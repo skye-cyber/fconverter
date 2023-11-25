@@ -3,12 +3,11 @@ import os
 from pdf2docx import parse
 import pdfminer.high_level
 import xml.sax.saxutils
-import xml.etree.ElementTree as ET
-from xml.sax.saxutils import escape
-import PyPDF2
+import traceback
 import subprocess
 from docx import Document
 from pptx import Presentation
+
 
 def word_to_pdf(word_file, pdf_file):
     try:
@@ -23,22 +22,23 @@ def word_to_pdf(word_file, pdf_file):
         with open("conversion.log", "a") as log_file:
             log_file.write(f"Error converting {word_file} to {pdf_file}: {e}\n")
 
+
 def pdf_to_word(pdf_file, word_file):
     try:
-        parse(pdf_file,word_file,start=0, end=None)
-        return True #return true if the conversion is successful
+        parse(pdf_file, word_file, start=0, end=None)
+        return True  # return true if the conversion is successful
         print(f"Successfully converted{pdf_file} to {word_file}")
     except Exception as e:
         print(f"Error converting {pdf_file} to {word_file}: {e}")
         with open("conversion.log", "a") as log_file:
-            log_file.write(f"Error converting {pdf_file} to {word_file}:          {e}\n")
-        return False # Return False if te conversion fails for all encodings
+            log_file.write(f"Error converting {pdf_file} to {word_file}:{e}\n")
+        return False  # Return False if te conversion fails for all encodings
+
 
 def word_to_ppt(word_file, ppt_file):
     try:
         document = Document(word_file)
         presentation = Presentation()
-        slides = presentation.slides
         slide_layout = presentation.slide_layouts[1]
         for paragraph in document.paragraphs:
             slide = presentation.slides.add_slide(slide_layout)
@@ -50,8 +50,10 @@ def word_to_ppt(word_file, ppt_file):
             print(f"Successfully converted {word_file} to {ppt_file}")
     except Exception as e:
         print(f"Error converting {word_file} to {ppt_file}: {e}")
+        traceback_info = traceback.format_exe()
         with open("conversion.log", "a") as log_file:
-            log_file.write(f"Error converting {word_file} to {ppt_file}: {e}\n")
+            log_file.write(f"Error converting {word_file} to {ppt_file}:\n{traceback_info}\n")
+
 
 def word_to_txt(word_file, txt_file):
     try:
@@ -63,7 +65,8 @@ def word_to_txt(word_file, txt_file):
     except Exception as e:
         print(f"Error converting {word_file} to {txt_file}: {e}")
         with open("conversion.log", "a") as log_file:
-            log_file.write(f"Error converting {word_file} to {txt_file}: {e}\n")
+            log_file.write(f"Error converting {word_file} to {txt_file}:{e}\n")
+
 
 def pdf_to_txt(pdf_file, txt_file):
     try:
@@ -91,22 +94,31 @@ def ppt_to_word(ppt_file, word_file):
                         new_paragraph = document.add_paragraph()
                         for run in paragraph.runs:
                             new_run = new_paragraph.add_run(run.text)
-                            new_run.bold = run.font.bold  # Preserve bold formatting
-                            new_run.italic = run.font.italic  # Preserve italic formatting
-                            new_run.underline = run.font.underline  # Preserve underline formatting
-                            new_run.font.name = run.font.name  # Preserve font name
-                            new_run.font.size = run.font.size  # Preserve font size
+                            # Preserve bold formatting
+                            new_run.bold = run.font.bold
+                            # Preserve italic formatting
+                            new_run.italic = run.font.italic
+                            # Preserve underline formatting
+                            new_run.underline = run.font.underline
+                            # Preserve font name
+                            new_run.font.name = run.font.name
+                            # Preserve font size
+                            new_run.font.size = run.font.size
                             try:
-                                new_run.font.color.rgb = run.font.color.rgb  # Preserve font color
+                                # Preserve font color
+                                new_run.font.color.rgb = run.font.color.rgb
                             except AttributeError:
-                                pass  # Ignore the error and continue without setting the font color
-                    document.add_paragraph()  # Add a new paragraph after each slide
+                                # Ignore error and continue without
+                                # setting the font color
+                                pass
+                    # Add a new paragraph after each slide
+                    document.add_paragraph()
         document.save(word_file)
         print(f"Successfully converted {ppt_file} to {word_file}")
     except Exception as e:
         print(f"Error converting {ppt_file} to {word_file}: {e}")
         with open("conversion.log", "a") as log_file:
-            log_file.write(f"Error converting {ppt_file} to {word_file}: {e}\n")
+            log_file.write(f"Error converting {ppt_file} to {word_file}:{e}\n")
 
 
 def text_to_word(text_file, word_file):
@@ -117,7 +129,7 @@ def text_to_word(text_file, word_file):
 
         # Create a new Word document
         doc = Document()
-        #Encode the text tu UTF-8
+        # Encode the text tu UTF-8
         escaped_content = xml.sax.saxutils.escape(text_content)
         # Add the text content to the document
         doc.add_paragraph(escaped_content)
@@ -129,14 +141,21 @@ def text_to_word(text_file, word_file):
     except Exception as e:
         print(f"Error converting to Word: {e}\n")
 
+
 def main():
-    parser = argparse.ArgumentParser(description='Convert files between different formats.')
-    parser.add_argument('conversion_type', type=int, help='The type of conversion to perform (1-7).\n 1: Word to PDF, 2: PDF to Word, 3: Word to PPT, 4: Word to TXT, 5: PDF to TXT, 6:PPT to Word, 7:TXT to Word\n Note that you must be in the directory where the file to be converted is locate, otherwise you might encounter a directory error')
+    parser = argparse.ArgumentParser(description='''Convert files between
+                                                 different formats.''')
+    parser.add_argument('conversion_type', type=int, help='''The type of
+                        conversion to perform (1-7).\n
+                        1: Word to PDF,\n 2: PDF to Word,\n 3: Word to PPT,\n
+                        4: Word to TXT,\n 5: PDF to TXT,\n 6:PPT to Word,\n
+                        7:TXT to Word\n Note that you must be in the directory
+                        where the file to be converted is locate,
+                        otherwise you might encounter a directory error''')
     parser.add_argument('input_file', type=str, help='Name of input file')
     parser.add_argument('output_file', type=str, help='Name of output file')
     args = parser.parse_args()
 
-if __name__ == '__main__':
     if args.conversion_type == 1:
         word_to_pdf(args.input_file, args.output_file)
     elif args.conversion_type == 2:
@@ -154,3 +173,6 @@ if __name__ == '__main__':
     else:
         print("Invalid conversion type. Please enter a number from 1 to 6.")
 
+
+if __name__ == '__main__':
+    main()
