@@ -32,7 +32,7 @@ A python file conversion tool
 To run the CLI app, use the following command:
 
 ```shell
-Fconverter [options] stdin stdout
+fconverter [options] stdin stdout
 ```
 
 Replace `[options]` with the appropriate command-line options based on the functionality you want to execute.
