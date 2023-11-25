@@ -7,7 +7,7 @@ A python file conversion tool
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/sky-cyber/fconverter
+   git clone https://github.com/skye-cyber/fconverter
    ```
 
 2. Navigate to the project directory:
