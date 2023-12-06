@@ -16,7 +16,6 @@ setup(
         'argparse',
         'pdf2docx',
         'pdfminer.six',
-        'xml.sax.saxutils',
         'python-docx',
         'python-pptx'
     ],

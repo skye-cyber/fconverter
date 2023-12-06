@@ -2,7 +2,7 @@ import argparse
 import os
 from pdf2docx import parse
 import pdfminer.high_level
-import xml.sax.saxutils
+import re
 import traceback
 import subprocess
 from docx import Document
@@ -127,15 +127,18 @@ def text_to_word(text_file, word_file):
         with open(text_file, 'r', encoding='utf-8', errors='ignore') as file:
             text_content = file.read()
 
+        # Filter out non-XML characters
+        filtered_content = re.sub(r'[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD]+', '', text_content)
+
         # Create a new Word document
         doc = Document()
-        # Encode the text tu UTF-8
-        escaped_content = xml.sax.saxutils.escape(text_content)
-        # Add the text content to the document
-        doc.add_paragraph(escaped_content)
+        # Add the filtered text content to the document
+        doc.add_paragraph(filtered_content)
 
         # Save the document as a Word file
         doc.save(word_file)
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
 
         print(f"Successfully converted {text_file} to {word_file}")
     except Exception as e:
