@@ -156,11 +156,16 @@ def text_to_mp3(text_file, mp3_file):
         # Generate the audio file
         tts = gTTS(text, lang='en')
         tts.save(mp3_file)
-        # play the audio file
-        os.system("mpv output.mp3")
         print(f"Sucessfully converted {text_file} to {mp3_file}")
     except Exception as e:
         print(f"An error occurred {e}")
+
+    try:
+        # play the audio file
+        os.system(f'mvp {mp3_file}')
+    except Exception:
+        print('''An error has occurred while attempting to play the generated file
+            Note that this error is caused by absence of mvp media player in your system ''')
 
 
 def main():
