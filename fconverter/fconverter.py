@@ -166,12 +166,11 @@ def main():
                                                  different formats.''')
     parser.add_argument('conversion_type', type=int, help='''The type of
                         conversion to perform (1-7).\n
-                        1: Word to PDF,\n 2: PDF to Word,\n 3: Word to PPT,\n
-                        4: Word to TXT,\n 5: PDF to TXT,\n 6:PPT to Word,\n
-                        7:TXT to Word\n TXT to mp3\n Note that you must be
-                        in the directory
-                        where the file to be converted is locate,
-                        otherwise you might encounter a directory error''')
+                        1: Word to PDF,\n\n   \t2: PDF to Word,\n   3: Word to PPT,\n
+                        4: Word to TXT,\n   5: PDF to TXT,\n    6:PPT to Word,\n
+                        7:TXT to Word\n     8:TXT to mp3\n
+Note that you must be in the directory where the file to be converted is
+locate, otherwise you might encounter a directory error''')
 
     parser.add_argument('input_file', type=str, help='Name of input file')
     parser.add_argument('output_file', type=str, help='Name of output file')
