@@ -162,7 +162,7 @@ def text_to_mp3(text_file, mp3_file):
 
     try:
         # play the audio file
-        os.system(f'mvp {mp3_file}')
+        os.system(f'mpv {mp3_file}')
     except Exception:
         print('''An error has occurred while attempting to play the generated file
             Note that this error is caused by absence of mvp media player in your system ''')
