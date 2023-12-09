@@ -1,6 +1,7 @@
 # fconverter
 A python file conversion tool 
-`This is a Linux command-line interface (CLI) application that coverts documents from one format to another.
+`This is a Linux command-line interface (CLI) utility that coverts documents from one format to another.
+Your can also convert text file to mp3 formart using google Text to speech library (gTTS).
 
 ## Installation
 
@@ -46,6 +47,7 @@ Replace `[options]` with the appropriate command-line options based on the funct
 - `5`: PDF to TXT.
 - `6`: PPT to Word
 - `7`: TXT to Word
+- `8`: TXt to mp3
 ## Examples
 
 1. Example command 1:
@@ -54,9 +56,16 @@ Replace `[options]` with the appropriate command-line options based on the funct
    fconverter 1 example.docx example.pdf
    ```
 
-  This promt parses 1 as the operation and example.docx as the file(stdin) to be converted to example.pdf (stdout)
+  This promt parses 1 as the operation and ```example.docx``` as the file(stdin) to be converted to ```example.pdf``` (stdout)
 
-Note that to run undertake any conversion you must be in the directory where file to be converted is located, otherwise you definetely sahall encounter an error
+2. converting text file to mp3
+   ```shell
+   fconverter 8 file.txt file.mp3
+   ```
+
+Note that to undertake any conversion you must be in the directory where the file to be converted is located, otherwise you definetely shall encounter an error.
+
+I you need to covert a file from any other form rather than text to mp3, you should consider converting it to text first
 
 ## Contributing
 
