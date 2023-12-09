@@ -7,6 +7,8 @@ import traceback
 import subprocess
 from docx import Document
 from pptx import Presentation
+from gtts import gTTS
+import tqdm
 
 
 def word_to_pdf(word_file, pdf_file):
@@ -145,6 +147,20 @@ def text_to_word(text_file, word_file):
         print(f"Error converting to Word: {e}\n")
 
 
+def text_to_mp3(text_file, mp3_file):
+    try:
+        # Read the file content
+        with open(text_file, 'r', errors='ignore') as file:
+            text = file.read().replace('\n', '')
+        # Generate the audio file
+        tts = gTTS(text, lang='en')
+        tts.save(mp3_file)
+        # play the audio file
+        os.system("mpv output.mp3")
+    except Exception as e:
+        print(f"An error occurred {e}")
+
+
 def main():
     parser = argparse.ArgumentParser(description='''Convert files between
                                                  different formats.''')
@@ -152,9 +168,11 @@ def main():
                         conversion to perform (1-7).\n
                         1: Word to PDF,\n 2: PDF to Word,\n 3: Word to PPT,\n
                         4: Word to TXT,\n 5: PDF to TXT,\n 6:PPT to Word,\n
-                        7:TXT to Word\n Note that you must be in the directory
+                        7:TXT to Word\n TXT to mp3\n Note that you must be
+                        in the directory
                         where the file to be converted is locate,
                         otherwise you might encounter a directory error''')
+
     parser.add_argument('input_file', type=str, help='Name of input file')
     parser.add_argument('output_file', type=str, help='Name of output file')
     args = parser.parse_args()
@@ -173,6 +191,8 @@ def main():
         ppt_to_word(args.input_file, args.output_file)
     elif args.conversion_type == 7:
         text_to_word(args.input_file, args.output_file)
+    elif args.conversion_type == 8:
+        text_to_mp3(args.input_file, args.output_file)
     else:
         print("Invalid conversion type. Please enter a number from 1 to 6.")
 
