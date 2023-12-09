@@ -8,7 +8,6 @@ import subprocess
 from docx import Document
 from pptx import Presentation
 from gtts import gTTS
-import tqdm
 
 
 def word_to_pdf(word_file, pdf_file):
@@ -148,6 +147,8 @@ def text_to_word(text_file, word_file):
 
 
 def text_to_mp3(text_file, mp3_file):
+    print('''Working on it...\n
+        This may take a while depending on the file size''')
     try:
         # Read the file content
         with open(text_file, 'r', errors='ignore') as file:
@@ -157,6 +158,7 @@ def text_to_mp3(text_file, mp3_file):
         tts.save(mp3_file)
         # play the audio file
         os.system("mpv output.mp3")
+        print(f"Sucessfully converted {text_file} to {mp3_file}")
     except Exception as e:
         print(f"An error occurred {e}")
 
@@ -165,12 +167,12 @@ def main():
     parser = argparse.ArgumentParser(description='''Convert files between
                                                  different formats.''')
     parser.add_argument('conversion_type', type=int, help='''The type of
-                        conversion to perform (1-7).\n
-                        1: Word to PDF,\n\n   \t2: PDF to Word,\n   3: Word to PPT,\n
-                        4: Word to TXT,\n   5: PDF to TXT,\n    6:PPT to Word,\n
-                        7:TXT to Word\n     8:TXT to mp3\n
+                        conversion to perform (1-7).
+                        1: Word to PDF,  2: PDF to Word,  3: Word to PPT,
+                        4: Word to TXT,   5: PDF to TXT,    6:PPT to Word,
+                        7:TXT to Word     8:TXT to mp3
 Note that you must be in the directory where the file to be converted is
-locate, otherwise you might encounter a directory error''')
+located, otherwise you might encounter a directory erro''')
 
     parser.add_argument('input_file', type=str, help='Name of input file')
     parser.add_argument('output_file', type=str, help='Name of output file')

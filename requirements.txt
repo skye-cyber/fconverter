@@ -3,5 +3,4 @@ pdf2docx
 pdfminer.six
 python-docx
 python-pptx
-tqdm
 gtts

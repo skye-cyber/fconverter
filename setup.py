@@ -18,7 +18,6 @@ setup(
         'pdfminer.six',
         'python-docx',
         'python-pptx',
-        'tqdm',
         'gtts'
     ],
     include_package_data=True,
