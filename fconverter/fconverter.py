@@ -62,7 +62,8 @@ def word_to_txt(word_file, txt_file):
         with open(txt_file, 'w', encoding='utf-8') as f:
             for paragraph in doc.paragraphs:
                 f.write(paragraph.text + '\n')
-                print(f"Successfully converted {word_file} to {txt_file}")
+                print("Processing...")
+            print(f"Successfully converted {word_file} to {txt_file}")
     except Exception as e:
         print(f"Error converting {word_file} to {txt_file}: {e}")
         with open("conversion.log", "a") as log_file:
