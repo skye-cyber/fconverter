@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='fconverter',
-    version='1.0',
+    version='1.2',
     author="Wambua aka Bullet Angel",
     packages=["fconverter"],
     long_description=open('README.md').read(),
@@ -18,7 +18,7 @@ setup(
         'pdfminer.six',
         'python-docx',
         'python-pptx',
-        'gtts'
+        'gTTS'
     ],
     include_package_data=True,
     license="MIT",

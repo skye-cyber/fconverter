@@ -8,6 +8,7 @@ import subprocess
 from docx import Document
 from pptx import Presentation
 from gtts import gTTS
+from .image import enhance_image
 
 
 def word_to_pdf(word_file, pdf_file):
@@ -158,8 +159,9 @@ def text_to_mp3(text_file, mp3_file):
         tts = gTTS(text, lang='en')
         tts.save(mp3_file)
         print(f"Sucessfully converted {text_file} to {mp3_file}")
+        print("Generated file size: ", len(mp3_file), 'MB')
     except Exception as e:
-        print(f"An error occurred {e}")
+        print(f"An error occurred:\n {e}")
 
     try:
         # play the audio file
@@ -173,12 +175,12 @@ def main():
     parser = argparse.ArgumentParser(description='''Convert files between
                                                  different formats.''')
     parser.add_argument('conversion_type', type=int, help='''The type of
-                        conversion to perform (1-7).
-                        1: Word to PDF,  2: PDF to Word,  3: Word to PPT,
-                        4: Word to TXT,   5: PDF to TXT,    6:PPT to Word,
-                        7:TXT to Word     8:TXT to mp3
-Note that you must be in the directory where the file to be converted is
-located, otherwise you might encounter a directory erro''')
+                        conversion to perform (\033[1;96m 1-9 \033[0m).
+                        \033[1;96m 1:\033[0m Word to PDF,  \033[1;96m 2:\033[m PDF to Word,  \033[1;96m 3:\033[0m Word to PPT,
+                        \033[1;96m 4:\033[0m Word to TXT,   \033[1;96m 5:\033[0m PDF to TXT,  \033[1;96m 6:\033[0mPPT to Word,
+                         \033[1;96m 7:\033[0mTXT to Word,     \033[1;96m 8:\033[0mTXT to mp3,    \033[1;96m 9:\033[0mImage Enhancement\n
+        \033[38;5;226m Note that you must be in the directory where the file to be converted is
+        located, otherwise you might encounter a directory error\033[0m''')
 
     parser.add_argument('input_file', type=str, help='Name of input file')
     parser.add_argument('output_file', type=str, help='Name of output file')
@@ -200,6 +202,8 @@ located, otherwise you might encounter a directory erro''')
         text_to_word(args.input_file, args.output_file)
     elif args.conversion_type == 8:
         text_to_mp3(args.input_file, args.output_file)
+    elif args.conversion_type == 9:
+        enhance_image(args.input_file, args.output_file)
     else:
         print("Invalid conversion type. Please enter a number from 1 to 6.")
 
