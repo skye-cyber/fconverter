@@ -10,6 +10,8 @@ def enhance_image(image_path, save_path):
     except Exception as e:
         print(f'''Failed to read the file {image_path}.
               Reason>>>:: {e}''')
+        with open("conversion.log", "a") as log_file:
+            log_file.write(f"Error converting {image_path} to {save_path}: {e}\n")
     # Resize the image to fit within the screen or window
     max_width = 800
     max_height = 600
@@ -36,6 +38,8 @@ def enhance_image(image_path, save_path):
     except Exception as e:
         print(f'''Failed to save the image:
             Reason:{e}''')
+        with open("conversion.log", "a") as log_file:
+            log_file.write(f"Error converting {image_path} to {save_path}: {e}\n")
 
 
 def resize_image(image, max_width, max_height):

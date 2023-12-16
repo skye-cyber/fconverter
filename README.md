@@ -47,7 +47,10 @@ Replace `[options]` with the appropriate command-line options based on the funct
 - `5`: PDF to TXT.
 - `6`: PPT to Word
 - `7`: TXT to Word
-- `8`: TXt to mp3
+- `8`: TXT to mp3
+- `9`: enhance image to gray scale
+- `10`: XLSX to Word
+- `11`: XLSX to text
 ## Examples
 
 1. Example command 1:

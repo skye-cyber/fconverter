@@ -8,7 +8,13 @@ import subprocess
 from docx import Document
 from pptx import Presentation
 from gtts import gTTS
+from .xls2Sql_db import convert_xlsx_to_database
 from .image import enhance_image
+from .xlsx import convert_xls_to_word, convert_xls_to_text
+from .eSpeak import text_to_mp3_fallback
+from .OCR import extract_text
+from .xlsx2csv import convert_xlsx_to_csv
+from . import banner
 
 
 def word_to_pdf(word_file, pdf_file):
@@ -18,7 +24,7 @@ def word_to_pdf(word_file, pdf_file):
         else:
             doc = Document(word_file)
             doc.save(pdf_file)
-            print(f"Successfully converted {word_file} to {pdf_file}")
+            print(f"\033[1;95m Successfully converted {word_file} to {pdf_file}\033[0m")
     except Exception as e:
         print(f"Error converting {word_file} to {pdf_file}: {e}")
         with open("conversion.log", "a") as log_file:
@@ -29,7 +35,7 @@ def pdf_to_word(pdf_file, word_file):
     try:
         parse(pdf_file, word_file, start=0, end=None)
         return True  # return true if the conversion is successful
-        print(f"Successfully converted{pdf_file} to {word_file}")
+        print(f"\033[1;95m Successfully converted{pdf_file} to {word_file}\033[0m")
     except Exception as e:
         print(f"Error converting {pdf_file} to {word_file}: {e}")
         with open("conversion.log", "a") as log_file:
@@ -38,6 +44,9 @@ def pdf_to_word(pdf_file, word_file):
 
 
 def word_to_ppt(word_file, ppt_file):
+    x = 0
+    for x in range[:1000]:
+        x += x
     try:
         document = Document(word_file)
         presentation = Presentation()
@@ -45,11 +54,11 @@ def word_to_ppt(word_file, ppt_file):
         for paragraph in document.paragraphs:
             slide = presentation.slides.add_slide(slide_layout)
             title = slide.shapes.title
-            title.text = "Converted Slide"
+            title.text = x
             content = slide.placeholders[1]
             content.text = paragraph.text
             presentation.save(ppt_file)
-            print(f"Successfully converted {word_file} to {ppt_file}")
+            print(f"\033[1;95mSuccessfully converted {word_file} to {ppt_file}\033[0m")
     except Exception as e:
         print(f"Error converting {word_file} to {ppt_file}: {e}")
         traceback_info = traceback.format_exe()
@@ -64,7 +73,7 @@ def word_to_txt(word_file, txt_file):
             for paragraph in doc.paragraphs:
                 f.write(paragraph.text + '\n')
                 print("Processing...")
-            print(f"Successfully converted {word_file} to {txt_file}")
+            print(f"\033[1;95mSuccessfully converted {word_file} to {txt_file}\033[0m")
     except Exception as e:
         print(f"Error converting {word_file} to {txt_file}: {e}")
         with open("conversion.log", "a") as log_file:
@@ -77,7 +86,7 @@ def pdf_to_txt(pdf_file, txt_file):
             text = pdfminer.high_level.extract_text(pdf_file)
         with open(txt_file, 'w', encoding='utf-8') as f:
             f.write(text)
-            print(f"Successfully converted {pdf_file} to {txt_file}")
+            print(f"\033[1;95mSuccessfully converted {pdf_file} to {txt_file}\033[0m")
     except Exception as e:
         print(f"Error converting {pdf_file} to {txt_file}: {e}")
         with open("conversion.log", "a") as log_file:
@@ -117,9 +126,9 @@ def ppt_to_word(ppt_file, word_file):
                     # Add a new paragraph after each slide
                     document.add_paragraph()
         document.save(word_file)
-        print(f"Successfully converted {ppt_file} to {word_file}")
+        print(f"\033[1;95mSuccessfully converted {ppt_file} to {word_file}\033[0m")
     except Exception as e:
-        print(f"Error converting {ppt_file} to {word_file}: {e}")
+        print(f"Error converting {ppt_file} to {word_file}:\n>>> {e}")
         with open("conversion.log", "a") as log_file:
             log_file.write(f"Error converting {ppt_file} to {word_file}:{e}\n")
 
@@ -140,12 +149,13 @@ def text_to_word(text_file, word_file):
 
         # Save the document as a Word file
         doc.save(word_file)
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-
-        print(f"Successfully converted {text_file} to {word_file}")
+    except FileExistsError as e:
+        print(f"Error saving the file: {str(e)}")
+        print(f"\033[1;95mSuccessfully converted {text_file} to {word_file}\033[0m")
     except Exception as e:
         print(f"Error converting to Word: {e}\n")
+        with open("conversion.log", "a") as log_file:
+            log_file.write(f"Error converting {text_file} to {word_file}: {e}\n")
 
 
 def text_to_mp3(text_file, mp3_file):
@@ -158,28 +168,46 @@ def text_to_mp3(text_file, mp3_file):
         # Generate the audio file
         tts = gTTS(text, lang='en')
         tts.save(mp3_file)
-        print(f"Sucessfully converted {text_file} to {mp3_file}")
-        print("Generated file size: ", len(mp3_file), 'MB')
+        print(f"\033[1;95mSucessfully converted {text_file} to {mp3_file}\033[0m")
+        print("Generated file size: ", len(mp3_file), 'MB/kb')
     except Exception as e:
         print(f"An error occurred:\n {e}")
+        with open("conversion.log", "a") as log_file:
+            log_file.write(f"Error converting {text_file} to {mp3_file}: {e}\n")
+        try:
+            choice = input('''\033[31mDefaulting\033[0m to \033[32mfallback voice\033[0m,
+            \033[33m press \033[34m yes\033[0m to \033[31m continue\033[0m else \033[35m enter to \033[36m exit>>\033[32m ''')
+            print(f"\033[38;5;226mYou selected \033[34m{choice} \033[0m")
+            if choice.lower == "yes":
+                text_to_mp3_fallback(text_file, mp3_file)
+                return True
+            elif choice == "":
+                print("Exiting>>>")
+        except Exception as e:
+            print(f"\033[31mAll conversion optins have failed\033[0m]:{e}")
 
-    try:
-        # play the audio file
-        os.system(f'mpv {mp3_file}')
-    except Exception:
-        print('''An error has occurred while attempting to play the generated file
-            Note that this error is caused by absence of mvp media player in your system ''')
+    if True:
+        try:
+
+            # play the audio file
+            os.system(f'mpv {mp3_file}')
+        except Exception:
+            print('''An error has occurred while attempting to play the
+                generated file.>>Note that this error is caused
+                by absence of mvp media player in your system ''')
 
 
 def main():
     parser = argparse.ArgumentParser(description='''Convert files between
                                                  different formats.''')
     parser.add_argument('conversion_type', type=int, help='''The type of
-                        conversion to perform (\033[1;96m 1-9 \033[0m).
+                        conversion to perform (\033[1;96m 1-14 \033[0m).
                         \033[1;96m 1:\033[0m Word to PDF,  \033[1;96m 2:\033[m PDF to Word,  \033[1;96m 3:\033[0m Word to PPT,
-                        \033[1;96m 4:\033[0m Word to TXT,   \033[1;96m 5:\033[0m PDF to TXT,  \033[1;96m 6:\033[0mPPT to Word,
-                         \033[1;96m 7:\033[0mTXT to Word,     \033[1;96m 8:\033[0mTXT to mp3,    \033[1;96m 9:\033[0mImage Enhancement\n
-        \033[38;5;226m Note that you must be in the directory where the file to be converted is
+                        \033[1;96m 4:\033[0m Word to TXT,   \033[1;96m 5:\033[0m PDF to TXT,  \033[1;96m 6:\033[0mPPTX to Word,
+                         \033[1;96m 7:\033[0m TXT to Word,   \033[1;96m 8:\033[0m TXT to mp3,  \033[1;96m 9:\033[0m Image Enhancement
+                         \033[1;96m 10:\033[0m XLSX to Word,  \033[1;96m 11:\033[0m XLSX to TXT \033[1;96m 12:\033[0m Image Text Extraction
+                          \033[1;96m 13:\033[0m Convert xlsx to sqlite db  \033[1;96m 14: XLSX to CSV\n\n
+                            \033[38;5;226;5m Note that you must be in the directory where the file to be converted is
         located, otherwise you might encounter a directory error\033[0m''')
 
     parser.add_argument('input_file', type=str, help='Name of input file')
@@ -204,9 +232,21 @@ def main():
         text_to_mp3(args.input_file, args.output_file)
     elif args.conversion_type == 9:
         enhance_image(args.input_file, args.output_file)
+    elif args.conversion_type == 10:
+        convert_xls_to_word(args.input_file, args.output_file)
+    elif args.conversion_type == 11:
+        convert_xls_to_text(args.input_file, args.output_file)
+    elif args.conversion_type == 12:
+        extract_text(args.input_file, args.output_file)
+    elif args.conversion_type == 13:
+        parser.add_argument('table_name', type=str, help='Name of table name for the db')
+        convert_xlsx_to_database(args.input_file, args.output_file, args.table_name)
+    elif args.conversion_type == 14:
+        convert_xlsx_to_csv(args.input_file, args.output_file)
     else:
-        print("Invalid conversion type. Please enter a number from 1 to 6.")
+        print("\033[1;91m Invalid conversion type. Please enter a number from 1 to 14.\033[0m")
 
 
 if __name__ == '__main__':
+    banner
     main()
