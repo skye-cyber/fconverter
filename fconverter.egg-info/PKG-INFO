@@ -20,6 +20,12 @@ Classifier: Programming Language :: Python :: Implementation :: PyPi
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 License-File: LICENSE
+Requires-Dist: argparse
+Requires-Dist: pdf2docx
+Requires-Dist: pdfminer.six
+Requires-Dist: python-docx
+Requires-Dist: python-pptx
+Requires-Dist: gTTS
 
 # fconverter
 A python file conversion tool 

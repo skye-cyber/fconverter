@@ -8,13 +8,13 @@ import subprocess
 from docx import Document
 from pptx import Presentation
 from gtts import gTTS
-from .xls2Sql_db import convert_xlsx_to_database
-from .image import enhance_image
-from .xlsx import convert_xls_to_word, convert_xls_to_text
-from .eSpeak import text_to_mp3_fallback
-from .OCR import extract_text
-from .xlsx2csv import convert_xlsx_to_csv
-from . import banner
+from xls2Sql import convert_xlsx_to_database
+from image import enhance_image
+from xlsx import convert_xls_to_word, convert_xls_to_text
+from eSpeak import text_to_mp3_fallback
+from OCR import ocr_text_extraction
+from xlsx2csv import convert_xlsx_to_csv
+import banner
 
 
 def word_to_pdf(word_file, pdf_file):
@@ -200,6 +200,7 @@ def text_to_mp3(text_file, mp3_file):
 def main():
     parser = argparse.ArgumentParser(description='''Convert files between
                                                  different formats.''')
+    banner
     parser.add_argument('conversion_type', type=int, help='''The type of
                         conversion to perform (\033[1;96m 1-14 \033[0m).
                         \033[1;96m 1:\033[0m Word to PDF,  \033[1;96m 2:\033[m PDF to Word,  \033[1;96m 3:\033[0m Word to PPT,
@@ -237,9 +238,10 @@ def main():
     elif args.conversion_type == 11:
         convert_xls_to_text(args.input_file, args.output_file)
     elif args.conversion_type == 12:
-        extract_text(args.input_file, args.output_file)
+        import OCRbanner
+        ocr_text_extraction(args.input_file, args.output_file)
     elif args.conversion_type == 13:
-        parser.add_argument('table_name', type=str, help='Name of table name for the db')
+        parser.add_argument('table_name', type=str, help='Name of table, name for the db')
         convert_xlsx_to_database(args.input_file, args.output_file, args.table_name)
     elif args.conversion_type == 14:
         convert_xlsx_to_csv(args.input_file, args.output_file)
@@ -248,5 +250,4 @@ def main():
 
 
 if __name__ == '__main__':
-    banner
     main()
