@@ -8,13 +8,13 @@ import subprocess
 from docx import Document
 from pptx import Presentation
 from gtts import gTTS
-from xls2Sql import convert_xlsx_to_database
-from image import enhance_image
-from xlsx import convert_xls_to_word, convert_xls_to_text
-from eSpeak import text_to_mp3_fallback
-from OCR import ocr_text_extraction
-from xlsx2csv import convert_xlsx_to_csv
-import banner
+from .xls2Sql import convert_xlsx_to_database
+from .image import enhance_image
+from .xlsx import convert_xls_to_word, convert_xls_to_text
+from .eSpeak import text_to_mp3_fallback
+from .OCR import ocr_text_extraction
+from .xlsx2csv import convert_xlsx_to_csv
+from .banner import banner
 
 
 def word_to_pdf(word_file, pdf_file):
@@ -24,7 +24,7 @@ def word_to_pdf(word_file, pdf_file):
         else:
             doc = Document(word_file)
             doc.save(pdf_file)
-            print(f"\033[1;95m Successfully converted {word_file} to {pdf_file}\033[0m")
+        print(f"\033[1;95m Successfully converted {word_file} to {pdf_file}\033[0m")
     except Exception as e:
         print(f"Error converting {word_file} to {pdf_file}: {e}")
         with open("conversion.log", "a") as log_file:
@@ -238,7 +238,7 @@ def main():
     elif args.conversion_type == 11:
         convert_xls_to_text(args.input_file, args.output_file)
     elif args.conversion_type == 12:
-        import OCRbanner
+        from . import OCRbanner
         ocr_text_extraction(args.input_file, args.output_file)
     elif args.conversion_type == 13:
         parser.add_argument('table_name', type=str, help='Name of table, name for the db')
