@@ -24,9 +24,8 @@ Your can also convert text file to mp3 formart using google Text to speech libra
    ```
 4.Install the package:
    ```shell
-   pip install .
+   pip install ./
    ```
-   
 
 ## Usage
 
@@ -48,9 +47,12 @@ Replace `[options]` with the appropriate command-line options based on the funct
 - `6`: PPT to Word
 - `7`: TXT to Word
 - `8`: TXT to mp3
-- `9`: enhance image to gray scale
+- `9`: Enhance image to gray scale
 - `10`: XLSX to Word
 - `11`: XLSX to text
+- `12`: Image OCR text Extraction
+- `13`: XLSX to SQLITE db
+- `14`: XLSX to CSV
 ## Examples
 
 1. Example command 1:
@@ -66,8 +68,6 @@ Replace `[options]` with the appropriate command-line options based on the funct
    fconverter 8 file.txt file.mp3
    ```
 
-Note that to undertake any conversion you must be in the directory where the file to be converted is located, otherwise you definetely shall encounter an error.
-
 I you need to covert a file from any other form rather than text to mp3, you should consider converting it to text first
 
 ## Contributing
@@ -76,7 +76,7 @@ Contributions are welcome! If you encounter any issues or have suggestions for i
 
 ## License
 
-This project is an open source software.
+This project is an open source software. Under GPL-3.0 license
 
 
 Feel free to modify and customize this template according to your specific project requirements and add any additional sections or information that you think would be helpful for users.
