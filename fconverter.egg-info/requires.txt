@@ -1,0 +1,7 @@
+argparse
+gTTS
+pdf2docx
+pdfminer.six
+pypandoc
+python-docx
+python-pptx

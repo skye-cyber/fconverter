@@ -18,7 +18,8 @@ setup(
         'pdfminer.six',
         'python-docx',
         'python-pptx',
-        'gTTS'
+        'gTTS',
+	'pypandoc'
     ],
     include_package_data=True,
     license="MIT",

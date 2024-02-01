@@ -4,3 +4,4 @@ pdfminer.six
 python-docx
 python-pptx
 gtts
+pypandoc
