@@ -16,6 +16,7 @@ from .OCR import ocr_text_extraction
 from .xlsx2csv import convert_xlsx_to_csv
 from .interactive import interact
 from .banner import banner
+from  .mp3 import convert_file_to_mp3
 
 
 def word_to_pdf(word_file, pdf_file):
@@ -231,7 +232,7 @@ def main():
     elif args.conversion_type == 7:
         text_to_word(args.input_file, args.output_file)
     elif args.conversion_type == 8:
-        text_to_mp3(args.input_file, args.output_file)
+        convert_file_to_mp3(args.input_file, args.output_file)
     elif args.conversion_type == 9:
         enhance_image(args.input_file, args.output_file)
     elif args.conversion_type == 10:
