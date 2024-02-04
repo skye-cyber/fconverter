@@ -207,7 +207,7 @@ def main():
                         conversion to perform (\033[1;96m 1-14 \033[0m).
                         \033[1;96m 1:\033[0m Word to PDF,  \033[1;96m 2:\033[m PDF to Word,  \033[1;96m 3:\033[0m Word to PPT,
                         \033[1;96m 4:\033[0m Word to TXT,   \033[1;96m 5:\033[0m PDF to TXT,  \033[1;96m 6:\033[0mPPTX to Word,
-                         \033[1;96m 7:\033[0m TXT to Word,   \033[1;96m 8:\033[0m TXT to mp3,  \033[1;96m 9:\033[0m Image Enhancement
+                         \033[1;96m 7:\033[0m TXT to Word,   \033[1;96m 8:\033[0m PDF,DOCX,TXT to mp3,  \033[1;96m 9:\033[0m Image Enhancement
                          \033[1;96m 10:\033[0m XLSX to Word,  \033[1;96m 11:\033[0m XLSX to TXT \033[1;96m 12:\033[0m Image Text Extraction
                           \033[1;96m 13:\033[0m Convert xlsx to sqlite db  \033[1;96m 14:\033[0m XLSX to CSV  \033[1;96m 15:\033[0m Other conversions including the above\n\n
                             \033[38;5;226;5m Note that sometimes you might need to navigate to the directory where the file to be converted is
