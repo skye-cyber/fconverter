@@ -38,6 +38,12 @@ def pdf_to_text(pdf_path):
         print(f"\033[31m Something went wrong:{e}\033[0m")
 
 
+def text_file(input_file):
+    with open(input_file, 'r', errors='ignore') as file:
+        text = file.read().replace('\n', ' ')
+    return text
+
+
 def docx_to_text(docx_path):
     try:
         doc = Document(docx_path)
@@ -53,9 +59,7 @@ def convert_file_to_mp3(input_file, output_file):
     elif input_file.endswith('.docx'):
         text = docx_to_text(input_file)
     elif input_file.endswith('.txt'):
-        with open(input_file, 'r', errors='ignore') as file:
-            text = file.read().replace('\n', ' ')
-        return text
+        text = text_file(input_file)
     else:
         print('Unsupported file format. Please provide a PDF or Word document.')
         return
