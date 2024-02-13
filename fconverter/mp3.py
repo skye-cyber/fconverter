@@ -101,7 +101,7 @@ def text_to_speech(text: str, output_file: str) -> None:
 
 def pdf_to_text(pdf_path):
     print('''Processing the file...\n''')
-    print(f'\033[32m Initializing pdf to text conversion sequence retries...\033[0m')
+print(f'\033[32m Initializing pdf to text conversion sequence...\033[0m')
     try:
         with open(pdf_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
