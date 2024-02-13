@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.11.7
 import argparse
 import os
 from pdf2docx import parse
@@ -16,13 +17,14 @@ from .OCR import ocr_text_extraction
 from .xlsx2csv import convert_xlsx_to_csv
 from .interactive import interact
 from .banner import banner
-from  .mp3 import convert_file_to_mp3
+from .mp3 import convert_file_to_mp3
 
 
 def word_to_pdf(word_file, pdf_file):
     try:
         if os.name == 'posix':  # Check if running on Linux
-            subprocess.run(['unoconv', '-f', 'pdf', '-o', pdf_file, word_file])
+            subprocess.run(['soffice', '--convert-to', 'pdf', word_file, pdf_file])
+
         else:
             doc = Document(word_file)
             doc.save(pdf_file)

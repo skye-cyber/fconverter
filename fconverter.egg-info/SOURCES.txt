@@ -13,6 +13,7 @@ fconverter/interactive.py
 fconverter/mp3.py
 fconverter/ppt2docx.py
 fconverter/test.py
+fconverter/word2pdf.py
 fconverter/xls2Sql.py
 fconverter/xlsx.py
 fconverter/xlsx2csv.py

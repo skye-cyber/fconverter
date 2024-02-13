@@ -25,9 +25,6 @@ except ImportError:
 
 T = TypeVar('T')
 
-global retries
-retries = 3
-
 
 def listify(iterable: Iterable[T]) -> List[T]:
     return list(iterable)
@@ -37,20 +34,20 @@ def join_audios(segments: Iterable[Union[pydub.AudioSegment, bytes]]) -> pydub.A
     return reduce(lambda s1, s2: s1 + (isinstance(s2, bytes) and pydub.AudioSegment.silent(duration=1) or s2), segments)
 
 
-def text_to_speech(text: str, output_file: str) -> None:
-    print(f'\033[34m Initializing audio conversion sequence retries = {retries}...\033[0m')
+def text_to_speech(text: str, output_file: str, retries: int = 3) -> None:
+    print(f'\033[32m Initializing conversion sequence retries = {retries}...\033[0m')
     CHUNK_SIZE: int = 8000
 
     try:
         st = speedtest.Speedtest()  # get initial network speed
         st.get_best_server()
         download_speed: float = st.download()  # Keep units as bytes
-        print(f"\033[32m Conversion sequence initialized start speed \033[36m{download_speed/1_000_000:.2f}Mbps\033[0m")
+        print(f"\033[32m Conversion in progress...initial speed is \033[36m{download_speed/1_000_000:.2f}Mbps\033[0m")
 
         try:
             if not os.path.exists('./tmp'):
                 os.mkdir('tmp')
-            ogg_folder = './tmp/.'
+            ogg_folder = './tmp/'
         except Exception:
             pass
         # Split input text into smaller parts and generate individual gTTS objects
@@ -90,18 +87,14 @@ def text_to_speech(text: str, output_file: str) -> None:
         ogg_folder = './tmp/.'
         output_file = f'{output_file}'
         # shutil.move(ogg_folder, output_file)  # Use shutil.move instead of mv for moving directories in python
-        try:
-            subprocess.run(['mv', f'{ogg_folder}', f'{output_file}'], check=True)
-            # If you want to keep the original directory after moving, uncomment the first line and comment out the subprocess.run() line
-        except Exception:
-            shutil.move(ogg_folder, output_file)
-            subprocess.run(['rm', '-r', f'{ogg_folder}'])
+        subprocess.run(['mv', '-f', f'{ogg_folder}', f'{output_file}'], check=True)
+        # If you want to keep the original directory after moving, uncomment the first line and comment out the subprocess.run() line
         print(f"Final Network Speed: {download_speed/(10**6):.2f} Mbps")
 
 
 def pdf_to_text(pdf_path):
     print('''Processing the file...\n''')
-    print(f'\033[32m Initializing pdf to text conversion sequence retries...\033[0m')
+    print(f'\033[32m Initializing conversion sequence retries = {retries}...\033[0m')
     try:
         with open(pdf_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
@@ -140,10 +133,8 @@ def convert_file_to_mp3(input_file, output_file):
     else:
         print('Unsupported file format. Please provide a PDF or Word document.')
         return
-    try:
-        text_to_speech(text, output_file)
-    except Exception:
-        pass
+
+    text_to_speech(text, output_file)
 
 
 if __name__ == "__main__":
