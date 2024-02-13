@@ -19,7 +19,9 @@ setup(
         'python-docx',
         'python-pptx',
         'gTTS',
-	'pypandoc'
+        'pypandoc',
+        'pydub',
+        'requests'
     ],
     include_package_data=True,
     license="MIT",
