@@ -1,4 +1,9 @@
 import cv2
+import logging
+import logging.handlers
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def enhance_image(image_path, save_path):
@@ -6,9 +11,9 @@ def enhance_image(image_path, save_path):
         # Load the image
         image = cv2.imread(image_path)
         if image is None:
-            print("Error:Failed to load the image.")
+            logger.error("Can not load null image.")
     except Exception as e:
-        print(f'''Failed to read the file {image_path}.
+        logger.error(f'''Failed to read the file {image_path}.
               Reason>>>:: {e}''')
         with open("conversion.log", "a") as log_file:
             log_file.write(f"Error converting {image_path} to {save_path}: {e}\n")
@@ -34,9 +39,9 @@ def enhance_image(image_path, save_path):
     try:
         # save the resulting enhanced image_path
         cv2.imwrite(save_path, enhanced_image)
-        print(f"Resulting image saved succesfully in {save_path} ")
+        logger.info(f"Resulting image saved succesfully in {save_path} ")
     except Exception as e:
-        print(f'''Failed to save the image:
+        logger.info(f'''Failed to save the image:
             Reason:{e}''')
         with open("conversion.log", "a") as log_file:
             log_file.write(f"Error converting {image_path} to {save_path}: {e}\n")

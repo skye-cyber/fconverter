@@ -1,107 +1,109 @@
+import os
+import sys
 from docx import Document
 import PyPDF2
 from gtts import gTTS
+from typing import Iterable
 import time
-import requests
-# import io
-import os
-import glob
-import shutil
+# import glob
 import pydub
-import sys
+import math
+from pydub import AudioSegment
+import requests
 import traceback
-from typing import Iterable, List, TypeVar, Union
-from functools import reduce
-import subprocess
+import logging
+import logging.handlers
 
-# os.mkdir('tmp', exist_ok=True)
+logging.basicConfig(level=logging.INFO, format='%(levelname)-4s %(message)s')
+logger = logging.getLogger(__name__)
 
+CHUNK_SIZE = 20000
 
 try:
     import speedtest
 except ImportError:
-    print("Instead of using 'speedtest', please run:\n  $ sudo apt-get install python3-speedtest-cli")
+    logger.info("Instead of using 'speedtest', please run:\n \
+        $ sudo apt-get install python3-speedtest-cli")
     sys.exit(-1)
 
-T = TypeVar('T')
 
-global retries
-retries = 3
-
-
-def listify(iterable: Iterable[T]) -> List[T]:
-    return list(iterable)
+class FrameSummary():
+    pass
 
 
-def join_audios(segments: Iterable[Union[pydub.AudioSegment, bytes]]) -> pydub.AudioSegment:
-    return reduce(lambda s1, s2: s1 + (isinstance(s2, bytes) and pydub.AudioSegment.silent(duration=1) or s2), segments)
+def join_audios(segments: Iterable[bytes], sample_rate: int = 16000) -> AudioSegment:
+    """Join multiple audio segments together"""
+    chunks = [AudioSegment.from_buffer(segment, frame_rate=sample_rate) for segment in segments]
+    return pydub.concat(*chunks)
 
 
-def text_to_speech(text: str, output_file: str) -> None:
-    print(f'\033[34m Initializing audio conversion sequence retries = {retries}...\033[0m')
-    CHUNK_SIZE: int = 8000
-
+def text_to_speech(text: str, output_file: str, ogg_folder: str = 'tempfile', retries: int = 3) -> None:
+    """Converts given text to speech using Google Text-to-Speech API."""
     try:
+        if not os.path.exists(ogg_folder):
+            os.mkdir(ogg_folder)
+
         st = speedtest.Speedtest()  # get initial network speed
         st.get_best_server()
         download_speed: float = st.download()  # Keep units as bytes
-        print(f"\033[32m Conversion sequence initialized start speed \033[36m{download_speed/1_000_000:.2f}Mbps\033[0m")
+        logger.info(f"\033[32m Conversion to mp3 sequence initialized start\
+speed \033[36m{download_speed/1_000_000:.2f}Mbps\033[0m")
 
-        try:
-            if not os.path.exists('./tmp'):
-                os.mkdir('tmp')
-            ogg_folder = './tmp/.'
-        except Exception:
-            pass
-        # Split input text into smaller parts and generate individual gTTS objects
-        for i in range(0, len(text), CHUNK_SIZE):
-            chunk = text[i:i+CHUNK_SIZE]
-            tts = gTTS(text=chunk, lang='en', slow=False)
-            output_filename = f"{ogg_folder}{'_'.join(chunk.split()[:5])}_{len(chunk)}_chunk.ogg"
-            tts.save(output_filename)
         for attempt in range(retries):
             try:
+                # Split input text into smaller parts and generate individual gTTS objects
+                for i in range(0, len(text), CHUNK_SIZE):
+                    chunk = text[i:i+CHUNK_SIZE]
+                    for i in range(0, math.ceil(len(text)/CHUNK_SIZE)):
+                        output_filename = f"{output_file}_{i}.ogg"
+                    tts = gTTS(text=chunk, lang='en', slow=False)
+                    tts.save(output_filename)
+
                 # Combine generated gTTS objects
-                combined_files = glob.glob(f"{ogg_folder}*{'_'.join(['abc', str(len(chunk)), 'chunk'])}_*")
-                combined_audio = join_audios([pydub.AudioSegment.from_wav(open(fname, 'rb')) for fname in combined_files])
+                combined_files = sorted(os.listdir(ogg_folder))
+                # combined_files = sorted(glob.iglob(ogg_folder+"/*.ogg"))
+                combined_audio = join_audios((open(fname, "rb").read() for fname in combined_files))
 
                 # Save the final audio file
                 combined_audio.export(output_file, format="mp3")
 
-                # Print success message and exit the loop
-                print(f'\033[32m Conversion successful. MP3 file saved as {output_file}\033[0m')
+                # Delete temporary OGG files
+                for fname in reversed(list(os.listdir(ogg_folder))):
+                    if fname.startswith('chunk'):
+                        os.remove(os.path.join(ogg_folder, fname))
+
+                logger.info(f"\033[32m Conversion successful! Output file: {output_file}\033[0m")
                 break
+
+            # Handle any network related issue gracefully
+            except Exception in (ConnectionError, ConnectionAbortedError, ConnectionRefusedError, ConnectionResetError) as e:
+                # or Exception in (requests.exceptions.RequestException) as e:
+                logger.error(f"Sorry boss we are sad to note the following\
+connection issue arised: {e} in {attempt+1}/{retries}:")
+                time.sleep(5)  # Wait 5 seconds before retrying
 
             # Handle connectivity/network error
             except requests.exceptions.RequestException as e:
-                print(f"Network error during conversion attempt {attempt + 1}/{retries}:{e}")
-                time.sleep(5)  # Wait 5 seconds before retrying
-
-            # Other exceptions
+                logger.error(f"{e}")
             except Exception as e:
-                print(f'\033[31m Error during conversion attempt {attempt + 1}/{retries}:{e}\033[0m')
+                logger.error(f'\033[31m Error during conversion attempt {attempt+1}/{retries}:{e}\033[0m')
                 tb = traceback.extract_tb(sys.exc_info()[2])
-                print("\n".join([f"  > {line}" for line in map(str, tb)]))
-                time.sleep(5)  # Wait 5 seconds before retrying
-        else:
-            print(f"\033[33m Text-to-audio conversion has failed after {retries} attempts.\033[0m")
+                logger.info("\n".join([f"  > {line}" for line in map(str, tb)]))
+                time.sleep(3)  # Wait 5 seconds before retrying
+                pass
+
+        if attempt >= retries:
+            logger.error(f"Conversion unsuccessful after {retries} attempts.")
 
     finally:
-        ogg_folder = './tmp/.'
-        output_file = f'{output_file}'
-        # shutil.move(ogg_folder, output_file)  # Use shutil.move instead of mv for moving directories in python
-        try:
-            subprocess.run(['mv', f'{ogg_folder}', f'{output_file}'], check=True)
-            # If you want to keep the original directory after moving, uncomment the first line and comment out the subprocess.run() line
-        except Exception:
-            shutil.move(ogg_folder, output_file)
-            subprocess.run(['rm', '-r', f'{ogg_folder}'])
-        print(f"Final Network Speed: {download_speed/(10**6):.2f} Mbps")
+        st = speedtest.Speedtest()
+        logger.info("Done")
+        logger.info(f"\033[33m Final Network Speed: {st.download()/(10**6):.2f} Mbps\033[0m")
 
 
 def pdf_to_text(pdf_path):
-    print('''Processing the file...\n''')
-    print(f'\033[32m Initializing pdf to text conversion sequence retries...\033[0m')
+    logger.info('''Processing the file...\n''')
+    logger.info('\033[32m Initializing pdf to text conversion sequence...\033[0m')
     try:
         with open(pdf_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
@@ -111,7 +113,7 @@ def pdf_to_text(pdf_path):
                 text += page.extractText()
             return text
     except Exception as e:
-        print(f"\033[31m Something went wrong:{e}\033[0m")
+        logger.error(f"\033[31m Something went wrong:{e}\033[0m")
 
 
 def text_file(input_file):
@@ -122,23 +124,46 @@ def text_file(input_file):
 
 def docx_to_text(docx_path):
     try:
-        print(f"\033[34m Converting {docx_path} to text...\033[0m")
+        logger.info(f"\033[34m Converting {docx_path} to text...\033[0m")
         doc = Document(docx_path)
         paragraphs = [paragraph.text for paragraph in doc.paragraphs]
         return '\n'.join(paragraphs)
     except Exception as e:
-        print(f"\033[31m Something went wrong in docx_to_text():{e}\033[0m")
+        logger.error(f"\033[31m Something went wrong in docx_to_text():{e}\033[0m")
 
 
 def convert_file_to_mp3(input_file, output_file):
     if input_file.endswith('.pdf'):
-        text = pdf_to_text(input_file)
+        try:
+            text = pdf_to_text(input_file)
+        except FileNotFoundError:
+            logger.error("File '{}' was not found.".format(input_file))
+            sys.exit(1)
+
     elif input_file.endswith('.docx'):
-        text = docx_to_text(input_file)
+        try:
+            text = docx_to_text(input_file)
+        except FileNotFoundError:
+            logger.error("File '{}' was not found.".format(input_file))
+            sys.exit(1)
+
+        except Exception as e:
+            logger.exception("Error converting {} to text: {}".format(input_file, str(e)))
+            sys.exit(1)
+
+        except Exception as e:
+            logger.exception("Error converting {} to text: {}".format(input_file, str(e)))
+            sys.exit(1)
+
     elif input_file.endswith('.txt'):
-        text = text_file(input_file)
+        try:
+            text = text_file(input_file)
+        except FileNotFoundError:
+            logger.error("File '{}' was not found.".format(input_file))
+            sys.exit(1)
+
     else:
-        print('Unsupported file format. Please provide a PDF or Word document.')
+        logger.error('Unsupported file format. Please provide a PDF or Word document.')
         return
     try:
         text_to_speech(text, output_file)
@@ -147,4 +172,4 @@ def convert_file_to_mp3(input_file, output_file):
 
 
 if __name__ == "__main__":
-    convert_file_to_mp3('Resume.docx', 'Resume.mp3')
+    convert_file_to_mp3('Lecture 1 Introduction to Multimedia systems.docx', 'Test')

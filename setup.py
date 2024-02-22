@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='fconverter',
-    version='1.2',
+    version='1.5',
     author="Wambua aka Bullet Angel",
     packages=["fconverter"],
     long_description=open('README.md').read(),
@@ -14,14 +14,17 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'argparse',
-        'pdf2docx',
         'pdfminer.six',
         'python-docx',
         'python-pptx',
         'gTTS',
         'pypandoc',
         'pydub',
-        'requests'
+        'requests',
+        'Pillow',
+        'pandas',
+        'PyPDF2',
+        'pytesseract'
     ],
     include_package_data=True,
     license="MIT",

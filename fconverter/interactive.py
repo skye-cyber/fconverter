@@ -1,33 +1,44 @@
 import os
 import sys
-import pypandoc
+import subprocess
+import logging
+import logging.handlers
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def interact(input_file, output_file):
     # create user input/output file type dictioray
-    compartibles = ['Markdown', 'reStructuredText', 'LaTeX', 'MediaWiki',
-                    'docx', 'odt', 'HTML', 'YAML', 'JSON', 'pdf', 'txt',
-                    'pptx', 'xlsx']
-    i = 0
-    for i in compartibles:
-        i += i
+    compartibles = ['epub', 'doc', 'csv',
+                    'docx', 'odt', 'html', 'json', 'pdf', 'txt',
+                    'pptx', 'xlsx', 'xhtml', 'xml']
     try:
-        print(f"\033[34m Compartible file formart are:: \033[0m{i}", end="\n")
+        logger.info("\033[33m Compartible file formart are::\033[0m", end=" ")
+        for i in compartibles:
+            logger.info(f"\033[35m{i}\033[0m", end=",")
 
         # obtain file extensions to determine file conversion types
         infilename, inextension = os.splitext(input_file)
         outfilename, outextension = os.splitext(output_file)
     except Exception as e:
-        print(f"\033[32m Error:{e}\033[0m")
+        logger.error(f"\033[32m Error:{e}\033[0m")
 
     if inextension == outextension:
-        print("Same file conversion type: No operation>\nExiting...")
+        logger.info("\033[33mSame file conversion type: No operation>\033[0m\nExiting...")
         sys.exit()
-    if inextension in compartibles and outextension in compartibles:
-        try:
-            pypandoc.convert_file(f"{input_file}", f"{inextension}", outputfile=f"{output_file}")
-            print(f"\033[1;95mSuccessfully converted {input_file} to {output_file}\033[0m")
-        except Exception as e:
-            print(f"Error:Unable to convert {input_file} to {output_file}: {e}")
-            with open("conversion.log", "a") as log_file:
-                log_file.write(f"Error converting {input_file} to {output_file}: {e}\n")
+    if inextension in compartibles.lower() and outextension.lower() in compartibles:
+        # Check whether running on unix-based sytem
+        if os.name == 'posix':
+            try:
+                subprocess.run(['soffice', '--convert-to', f'{outextension}', f'{input_file}', f'{output_file}'])
+                logger.info(f"\033[1;95mSuccessfully converted {input_file} to {output_file}\033[0m")
+            except Exception as e:
+                logger.error(f"Unable to convert {input_file} to {output_file}: {e}")
+                logger.inf("Please make sure that soffice is installed in your system")
+                with open("conversion.log", "a") as log_file:
+                    log_file.write(f"Error converting {input_file} to {output_file}: {e}\n")
+        # if the system is not unix based exit
+        else:
+            logger.info('This conversion only works for unix-based systems at the moment.')
+            sys.exit

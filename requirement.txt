@@ -1,10 +1,15 @@
 argparse
-pdf2docx
 pdfminer.six
 python-docx
 python-pptx
 gtts
+PyPDF2
+pandas
+pptx
+cv2
+Pillow
 pypandoc
 pydub
+tesseract
 requests
 

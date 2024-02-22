@@ -1,6 +1,7 @@
 LICENSE
 README.md
 setup.py
+fconverter/AOCR.py
 fconverter/EStranslate.py
 fconverter/OCR.py
 fconverter/OCRbanner.py
@@ -12,8 +13,6 @@ fconverter/image.py
 fconverter/interactive.py
 fconverter/mp3.py
 fconverter/ppt2docx.py
-fconverter/test.py
-fconverter/word2pdf.py
 fconverter/xls2Sql.py
 fconverter/xlsx.py
 fconverter/xlsx2csv.py
