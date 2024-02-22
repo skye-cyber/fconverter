@@ -23,7 +23,7 @@ setup(
         'requests',
         'Pillow',
         'pandas',
-        'PyPDF2',
+        'cv2',
         'pytesseract'
     ],
     include_package_data=True,

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3.11.7
 import argparse
 import os
-from pdf2docx import parse
 import pdfminer.high_level
 import re
 import traceback
@@ -23,6 +22,15 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
 
 
+def check_if_running_inside_termux():
+    try:
+        termux_cmd = ['which', 'apt']
+        return subprocess.call(termux_cmd) == 0
+    except Exception:
+        logger.error('Unable to identify environment!')
+        return False
+
+
 def word_to_pdf(word_file, pdf_file):
     try:
         if os.name == 'posix':  # Check if running on Linux
@@ -39,15 +47,45 @@ def word_to_pdf(word_file, pdf_file):
 
 
 def pdf_to_word(pdf_file, word_file):
-    try:
-        parse(pdf_file, word_file, start=0, end=None)
-        return True  # return true if the conversion is successful
-        logger.info(f"\033[1;95m Successfully converted{pdf_file} to {word_file}\033[0m")
-    except Exception as e:
-        logger.error(f"Error converting {pdf_file} to {word_file}: {e}")
-        with open("conversion.log", "a") as log_file:
-            log_file.write(f"Error converting {pdf_file} to {word_file}:{e}\n")
-        return False  # Return False if te conversion fails for all encodings
+    if os.name == 'posix' or os.name == 'ms-dos':
+        try:
+            from pdf2docx import parse
+        except ImportError:
+            logger.error('pdf2docx not found \033[34mInstalling...\033[0m')
+            subprocess.run(['pip', 'install', 'pdf2docx'])
+        try:
+            parse(pdf_file, word_file, start=0, end=None)
+            return True  # return true if the conversion is successful
+            logger.info(f"\033[1;95m Successfully converted{pdf_file} to {word_file}\033[0m")
+        except Exception as e:
+            logger.error(f"Error converting {pdf_file} to {word_file}: {e}")
+            with open("conversion.log", "a") as log_file:
+                log_file.write(f"Error converting {pdf_file} to {word_file}:{e}\n")
+            return False  # Return False if te conversion fails for all encodings
+    elif check_if_running_inside_termux():
+        try:
+            from PyPDF2 import PdfFileReader
+            # Open the pdf file using PyPDF2
+            logger.info('Reading pdf..')
+            with open(pdf_file, 'rb') as fh:
+                reader = PdfFileReader(fh)
+            # create a blanks document using python-docx
+            doc = Document
+            # Add each page content into the Docx document
+            for i in range(reader.numPages):
+                page = reader.getPage(i)
+                logger.info(f'\033[32mPage{i}/{reader.numPages}\033[0m')
+                text = page.extractText()  # .replace('\r\n', '\n').strip()
+                # para = doc.add_paragraph(text)
+                doc.add_paragraph(text)
+            # Save the resulting File
+            doc.save(word_file)
+            logger.info(f"\033[1;95m Successfully converted{pdf_file} to {word_file}\033[0m")
+        except ImportError:
+            logger.info('Failed to import PyPDF2 \033[34m Installing it\033[0m')
+            subprocess.run(['pip', 'install', 'PyPDF2'])
+        except Exception as e:
+            logger.info(f'\033[31m{e}\033[0m')
 
 
 def word_to_ppt(word_file, ppt_file):

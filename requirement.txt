@@ -3,7 +3,6 @@ pdfminer.six
 python-docx
 python-pptx
 gtts
-PyPDF2
 pandas
 pptx
 cv2
