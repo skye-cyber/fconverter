@@ -4,7 +4,21 @@ from PIL import Image
 import pytesseract
 
 
-def convert_ppt_to_word(ppt_file, docx_file):
+def get_pptx_files(input_file, output_file):
+    if os.path.isfile(input_file):
+        word_to_pdf(input_file, output_file)
+    elif os.path.isdir(input_file):
+        for file in os.listdir(input_file):
+            if os.path.isfile(file) and file.endswith('.pptx') or file.endswith('.ppt'):
+                input_file = file
+                basename, ext = os.path.splitext(input_file)
+                output_file = basename + '.docx'
+                convert_ppt_to_word(input_file, output_file)
+            else:
+                pass
+
+
+def convert_pptx_to_word(ppt_file, docx_file):
     # Load the PowerPoint presentation
     presentation = Presentation(ppt_file)
 

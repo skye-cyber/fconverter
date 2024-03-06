@@ -1,0 +1,28 @@
+1ST Normal Form
+
+
+2nd Normal form
+student
+
+course
+course
+
+3rd Normal form
+student
+
+course
+Unit
+ 
+A university consists of a number of departments. Each department offers several courses. A number of modules make up each course. Students enrol in a_ particular course and take modules towards the completion of that course. Each module is taught by a lecturer from the appropriate department, and each lecturer tutors a group of students. Draw an ER-model for this scenario
+           
+1              1                                     M                                                                             
+
+
+     
+
+
+
+
+
+
+                                                                     
