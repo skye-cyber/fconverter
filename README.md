@@ -17,12 +17,7 @@ Your can also convert text file to mp3 formart using google Text to speech libra
    cd fconverter
    ```
 
-3. Install the required dependencies:
-
-   ```shell
-   pip install -r requirements.txt
-   ```
-4.Install the package:
+3. Install the package:
    ```shell
    pip install ./
    ```
