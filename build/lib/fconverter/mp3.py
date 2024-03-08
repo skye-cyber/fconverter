@@ -27,6 +27,22 @@ except ImportError:
     sys.exit(-1)
 
 
+def get_2mp3_files(input_file, output_file):
+    if os.path.isfile(input_file):
+        convert_file_to_mp3(input_file, output_file)
+    elif os.path.isdir(input_file):
+        for file in os.listdir(input_file):
+            # _, ext = os.path.splitext(input_file)
+            if file.endswith('.txt') or file.endswith('.pdf') or \
+                    file.endswith('.docx') or file.endswith('.doc'):
+                input_file = file
+                basename, ext = os.path.splitext(input_file)
+                output_file = basename
+                convert_file_to_mp3(input_file, output_file)
+            else:
+                pass
+
+
 class FrameSummary():
     pass
 

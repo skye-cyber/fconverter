@@ -8,5 +8,5 @@ pydub
 requests
 Pillow
 pandas
-PyPDF2
+opencv-python
 pytesseract

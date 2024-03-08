@@ -7,12 +7,13 @@ fconverter/OCR.py
 fconverter/OCRbanner.py
 fconverter/__init__.py
 fconverter/banner.py
-fconverter/eSpeak.py
 fconverter/fconverter.py
 fconverter/image.py
 fconverter/interactive.py
 fconverter/mp3.py
+fconverter/pdf2doc.py
 fconverter/ppt2docx.py
+fconverter/word_to_pdf.py
 fconverter/xls2Sql.py
 fconverter/xlsx.py
 fconverter/xlsx2csv.py

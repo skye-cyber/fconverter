@@ -2,6 +2,20 @@ import pandas as pd
 import sqlite3
 
 
+def get_word2pdf_files(input_file, output_file):
+    if os.path.isfile(input_file):
+        convert_xlsx_to_database(input_file, output_file)
+    elif os.path.isdir(input_file):
+        for file in os.listdir(input_file):
+            if os.path.isfile(file) and file.endswith('.xlsx') or file.endswith('.xls'):
+                input_file = file
+                basename, ext = os.path.splitext(input_file)
+                output_file = basename + '.sql'
+                convert_xlsx_to_database(input_file, output_file)
+            else:
+                pass
+
+
 def convert_xlsx_to_database(xlsx_file, db_file, table_name):
     # Read the Excel file into a pandas DataFrame
     print(f"Reading {xlsx_file}...")

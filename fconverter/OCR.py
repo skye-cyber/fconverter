@@ -51,7 +51,7 @@ def ocr_text_extraction(image_path, OCR_file):
             file.write(text)
         logger.info(f"File saved in \033[33m{current_path}\033[0m as \033[32m{OCR_file}\033[0m:")
     except FileNotFoundError as e:
-        logger.error(f"Error: {type(e).__name__}: {str(e)}")
+        logger.error(f"Error: {str(e)}")
     except IOError as e:
         logger.error(f"Error: Could not write to output file '{OCR_file}'. Reason: {str(e)}\033[0m")
     except Exception as e:

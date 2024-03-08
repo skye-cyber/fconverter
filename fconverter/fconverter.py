@@ -226,6 +226,28 @@ conversion to perform (\033[1;96m 1-14 \033[0m).
 
     parser.add_argument('input_file', type=str, help='Name of input file')
     parser.add_argument('output_file', type=str, help='Name of output file')
+
+    # implement autocomplete helper
+    def complete(text, state):
+        all_options = ['-h', '--help']  # Always include help option
+        for action in parser._actions:
+            if isinstance(action, argparse._ArgumentGroup):
+                # Skip _ArgumentGroups
+                continue
+            for opt_str in action.option_strings:
+                all_options.append(opt_str)
+        if state < len(all_options):
+            return all_options[state]
+        else:
+            return None
+
+    # Register autocomplete helper function
+    import readline
+    readline.set_completer_delims('\t\n;')
+    readline.parse_and_bind("tab: complete")
+    readline.set_completer(complete)
+
+    # Parse arguements
     args = parser.parse_args()
     input_file = args.input_file
     output_file = args.output_file

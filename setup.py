@@ -23,7 +23,7 @@ setup(
         'requests',
         'Pillow',
         'pandas',
-        'cv2',
+        'opencv-python',
         'pytesseract'
     ],
     include_package_data=True,
