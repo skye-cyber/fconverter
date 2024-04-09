@@ -1,6 +1,6 @@
 import os
+import sys
 import subprocess
-from docx import Document
 
 
 def get_word2pdf_files(input_file, output_file):
@@ -21,12 +21,22 @@ def word_to_pdf(word_file, pdf_file):
     try:
         print(f'\033[34mConverting: \033[0m{word_file} \033[34mto \033[0m{pdf_file}')
         if os.name == 'posix':  # Check if running on Linux
+            # Use subprocess to run the dpkg and grep commands
+            result = subprocess.run(['dpkg', '-l', 'libreoffice'], stdout=subprocess.PIPE, text=True)
+            if result.returncode != 0:
+                print("Please install libreoffice to use this functionality !")
+                sys.exit(1)
             subprocess.run(['soffice', '--convert-to', 'pdf', word_file, pdf_file])
             # print(f"\033[1;95m Successfully converted {word_file} to {pdf_file}\033[0m")
-        else:
-            doc = Document(word_file)
-            doc.save(pdf_file)
+        elif os.name == "nt":
+            try:
+                from docx2pdf import convert
+            except ImportError:
+                print("Run pip install docx2pdf for this function to work")
+                sys.exit(1)
+            convert(word_file, pdf_file)
             print(f"\033[1;95m Successfully converted {word_file} to {pdf_file}\033[0m")
+
     except Exception as e:
         print(f"Error converting {word_file} to {pdf_file}: {e}")
         with open("conversion.log", "a") as log_file:
@@ -34,4 +44,4 @@ def word_to_pdf(word_file, pdf_file):
 
 
 if __name__ == '__main__':
-    get_files('/home/user/Documents/test/', 'none.pdf')
+    get_word2pdf_files('/home/user/Documents/test/', 'none.pdf')

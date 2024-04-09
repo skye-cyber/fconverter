@@ -24,11 +24,14 @@ setup(
         'Pillow',
         'pandas',
         'opencv-python',
-        'pytesseract'
+        'pytesseract',
+        'PyPDF2',
+        'requests'
+        # 'ffmpeg'
     ],
     include_package_data=True,
     license="MIT",
-    keywords='fconverter',
+    keywords=['fconverter', "file-conversion"],
     classifiers=[
         "Environment :: Console",
         "Operating System :: POSIX :: Linux",

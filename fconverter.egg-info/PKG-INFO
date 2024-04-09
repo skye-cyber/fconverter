@@ -3,7 +3,7 @@ Name: fconverter
 Version: 1.5
 Author: Wambua aka Bullet Angel
 License: MIT
-Keywords: fconverter
+Keywords: fconverter,file-conversion
 Classifier: Environment :: Console
 Classifier: Operating System :: POSIX :: Linux
 Classifier: Natural Language :: English
@@ -20,18 +20,6 @@ Classifier: Programming Language :: Python :: Implementation :: PyPi
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: argparse
-Requires-Dist: pdfminer.six
-Requires-Dist: python-docx
-Requires-Dist: python-pptx
-Requires-Dist: gTTS
-Requires-Dist: pypandoc
-Requires-Dist: pydub
-Requires-Dist: requests
-Requires-Dist: Pillow
-Requires-Dist: pandas
-Requires-Dist: opencv-python
-Requires-Dist: pytesseract
 
 # fconverter
 A python file conversion tool 

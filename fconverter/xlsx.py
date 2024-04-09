@@ -2,21 +2,24 @@ import pandas as pd
 from docx import Document
 
 
-def get_word2pdf_files(input_file, output_file):
+def get_xlsx2word_files(input_file, output_file):
     if os.path.isfile(input_file):
         convert_xls_to_word(input_file, output_file)
     elif os.path.isdir(input_file):
         for file in os.listdir(input_file):
-            if os.path.isfile(file) and file.endswith('.xlsx') or file.endswith('.xls'):
+            if os.path.isfile(file):
                 input_file = file
-                basename, ext = os.path.splitext(input_file)
-                output_file = basename + '.docx'
+                if file.endswith('.xlsx'):
+                    basename = file[:-4]
+                if file.endswith('.xls'):
+                    basename = file[:-3]
+                output_file = basename + 'docx'
                 convert_xls_to_word(input_file, output_file)
             else:
                 pass
 
 
-def get_word2pdf_files(input_file, output_file):
+def get_xlsx2txt_files(input_file, output_file):
     if os.path.isfile(input_file):
         convert_xls_to_text(input_file, output_file)
     elif os.path.isdir(input_file):

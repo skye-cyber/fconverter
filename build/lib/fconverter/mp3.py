@@ -1,18 +1,18 @@
-import os
-import sys
-from docx import Document
-import PyPDF2
-from gtts import gTTS
-from typing import Iterable
-import time
-# import glob
-import pydub
-import math
-from pydub import AudioSegment
-import requests
-import traceback
 import logging
 import logging.handlers
+import math
+import os
+import sys
+import time
+import traceback
+from typing import Iterable
+
+import pydub
+import PyPDF2
+import requests
+from docx import Document
+from gtts import gTTS
+from pydub import AudioSegment
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)-4s %(message)s')
 logger = logging.getLogger(__name__)
@@ -23,12 +23,17 @@ try:
     import speedtest
 except ImportError:
     logger.info("Instead of using 'speedtest', please run:\n \
-        $ sudo apt-get install python3-speedtest-cli")
-    sys.exit(-1)
+        $ sudo apt-get install python3-speedtest-cli for linux users")
+    sys.exit(1)
 
 
-def get_2mp3_files(input_file, output_file):
+def get_2mp3_files(input_file):
     if os.path.isfile(input_file):
+        ls = ['.txt', '.doc', '.pdf']
+        if input_file.lower().endswith(tuple(ls)):
+            output_file = input_file[:-4]
+        elif input_file.lower().endswith('.docx'):
+            output_file = input_file[:-5]
         convert_file_to_mp3(input_file, output_file)
     elif os.path.isdir(input_file):
         for file in os.listdir(input_file):
@@ -72,6 +77,8 @@ speed \033[36m{download_speed/1_000_000:.2f}Mbps\033[0m")
                     chunk = text[i:i+CHUNK_SIZE]
                     for i in range(0, math.ceil(len(text)/CHUNK_SIZE)):
                         output_filename = f"{output_file}_{i}.ogg"
+                        if os.path.exists(output_filename):
+                            output_filename = f"{output_file}_{i+1}.ogg"
                     tts = gTTS(text=chunk, lang='en', slow=False)
                     tts.save(output_filename)
 
@@ -81,7 +88,7 @@ speed \033[36m{download_speed/1_000_000:.2f}Mbps\033[0m")
                 combined_audio = join_audios((open(fname, "rb").read() for fname in combined_files))
 
                 # Save the final audio file
-                combined_audio.export(output_file, format="mp3")
+                combined_audio.export(output_file + '.mp3', format="mp3")
 
                 # Delete temporary OGG files
                 for fname in reversed(list(os.listdir(ogg_folder))):
@@ -114,6 +121,7 @@ connection issue arised: {e} in {attempt+1}/{retries}:")
     finally:
         st = speedtest.Speedtest()
         logger.info("Done")
+        print("Calculating final speed ...")
         logger.info(f"\033[33m Final Network Speed: {st.download()/(10**6):.2f} Mbps\033[0m")
 
 
@@ -149,6 +157,7 @@ def docx_to_text(docx_path):
 
 
 def convert_file_to_mp3(input_file, output_file):
+    ls = ["doc", "docx"]
     if input_file.endswith('.pdf'):
         try:
             text = pdf_to_text(input_file)
@@ -156,7 +165,7 @@ def convert_file_to_mp3(input_file, output_file):
             logger.error("File '{}' was not found.".format(input_file))
             sys.exit(1)
 
-    elif input_file.endswith('.docx'):
+    elif input_file.lower().endswith(tuple(ls)):
         try:
             text = docx_to_text(input_file)
         except FileNotFoundError:

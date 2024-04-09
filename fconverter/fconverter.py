@@ -9,7 +9,7 @@ from docx import Document
 from pptx import Presentation
 from .xls2Sql import convert_xlsx_to_database
 from .image import enhance_image
-from .xlsx import convert_xls_to_word, convert_xls_to_text
+from .xlsx import get_xlsx2word_files, get_xlsx2txt_files
 from .OCR import ocr_text_extraction
 from .xlsx2csv import convert_xlsx_to_csv
 from .interactive import interact
@@ -111,9 +111,12 @@ def word_to_txt(word_file, txt_file):
     try:
         doc = Document(word_file)
         with open(txt_file, 'w', encoding='utf-8') as f:
+            par = 0
+            total = len(doc.paragraphs)
             for paragraph in doc.paragraphs:
+                par += 1
                 f.write(paragraph.text + '\n')
-                logger.info("Processing...")
+                print(f"Processing {par} of {total}", end="\r")
             logger.info(f"\033[1;95mSuccessfully converted {word_file} to \
 {txt_file}\033[0m")
     except Exception as e:
@@ -211,7 +214,7 @@ def text_to_word(text_file, word_file):
 
 def main():
     parser = argparse.ArgumentParser(description='''Convert files between
-                                                 different formats.''')
+                                                different formats.''')
     banner
     parser.add_argument('conversion_type', type=int, help='''The type of
 conversion to perform (\033[1;96m 1-14 \033[0m).
@@ -222,10 +225,10 @@ conversion to perform (\033[1;96m 1-14 \033[0m).
 \033[1;96m 9:\033[0m Image Enhancement \033[1;96m 10:\033[0m XLSX to Word,\
 \033[1;96m 11:\033[0m XLSX to TXT \033[1;96m 12:\033[0m Image Text Extraction,\
 \033[1;96m 13:\033[0m Convert xlsx to sqlite db  \033[1;96m 14:\033[0m XLSX to\
- CSV\033[1;96m 15:\033[0m Other conversions including the above\n\n''')
+CSV\033[1;96m 15:\033[0m Other conversions including the above\n\n''')
 
     parser.add_argument('input_file', type=str, help='Name of input file')
-    parser.add_argument('output_file', type=str, help='Name of output file')
+    parser.add_argument('-o', '--output_file', type=str, help='Name of output file')
 
     # implement autocomplete helper
     def complete(text, state):
@@ -267,13 +270,13 @@ conversion to perform (\033[1;96m 1-14 \033[0m).
     elif args.conversion_type == 7:
         text_to_word(input_file, output_file)
     elif args.conversion_type == 8:
-        get_2mp3_files(input_file, output_file)
+        get_2mp3_files(input_file)
     elif args.conversion_type == 9:
         enhance_image(input_file, output_file)
     elif args.conversion_type == 10:
-        convert_xls_to_word(input_file, output_file)
+        get_xlsx2word_files(input_file, output_file)
     elif args.conversion_type == 11:
-        convert_xls_to_text(input_file, output_file)
+        get_xlsx2txt_files(input_file, output_file)
     elif args.conversion_type == 12:
         try:
             from . import OCRbanner
@@ -295,4 +298,8 @@ number from 1 to 14.\033[0m")
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        traceback_info = traceback.format_exc()
+        print(f"{e}\n{traceback_info}")
