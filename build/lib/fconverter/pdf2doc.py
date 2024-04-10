@@ -1,3 +1,4 @@
+import subprocess
 from docx import Document
 import logging
 import logging.handlers
@@ -31,9 +32,9 @@ def pdf_to_word(pdf_file, word_file):
     except ImportError:
         logger.info('Failed to import PyPDF2 \033[34mInstalling it\033[0m')
         subprocess.run(['pip', 'install', 'PyPDF2'])
-        pdf_to_txt(pdf_file, word_file)
+        pdf_to_word(pdf_file, word_file)
     # except Exception as e:
-       # print(f'\033[31m{e}\033[0m')
+    # print(f'\033[31m{e}\033[0m')
 
 
 if __name__ == '__main__':
