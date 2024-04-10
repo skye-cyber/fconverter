@@ -19,4 +19,4 @@ def progress_show():
 
 
 if __name__ == "__main__":
-    progress_bar_animation()
+    progress_show()
