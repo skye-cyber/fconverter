@@ -5,9 +5,6 @@ import os
 import sys
 import time
 import traceback
-from typing import Iterable
-
-import pydub
 import PyPDF2
 import requests
 from docx import Document
@@ -52,10 +49,24 @@ class FrameSummary():
     pass
 
 
-def join_audios(segments: Iterable[bytes], sample_rate: int = 16000) -> AudioSegment:
-    """Join multiple audio segments together"""
-    chunks = [AudioSegment.from_buffer(segment, frame_rate=sample_rate) for segment in segments]
-    return pydub.concat(*chunks)
+def join_audios(path, output_file):
+    print("\033[1;94mCreate a master file\033[0m", end='\r')
+    # Create a list to store files
+    ogg_files = []
+    # loop through the directory while adding the ogg files to the list
+    for filename in os.listdir(path):
+        if filename.endswith('.ogg'):
+            ogg_file = os.path.join(path, filename)
+            ogg_files.append(AudioSegment.from_file(ogg_file))
+
+    # Concatenate the ogg files
+    combined_ogg = ogg_files[0]
+    for i in range(1, len(ogg_files)):
+        combined_ogg += ogg_files[i]
+
+    # Export the combined ogg to new mp3 file or ogg file
+    combined_ogg.export(output_file + "_master.mp3", format='mp3')
+    print("\033[1;92mOk                    \033[0m")
 
 
 def text_to_speech(text: str, output_file: str, ogg_folder: str = 'tempfile', retries: int = 3) -> None:
@@ -82,22 +93,6 @@ speed \033[36m{download_speed/1_000_000:.2f}Mbps\033[0m")
                     tts = gTTS(text=chunk, lang='en', slow=False)
                     tts.save(output_filename)
 
-                # Combine generated gTTS objects
-                combined_files = sorted(os.listdir(ogg_folder))
-                # combined_files = sorted(glob.iglob(ogg_folder+"/*.ogg"))
-                combined_audio = join_audios((open(fname, "rb").read() for fname in combined_files))
-
-                # Save the final audio file
-                combined_audio.export(output_file + '.mp3', format="mp3")
-
-                # Delete temporary OGG files
-                for fname in reversed(list(os.listdir(ogg_folder))):
-                    if fname.startswith('chunk'):
-                        os.remove(os.path.join(ogg_folder, fname))
-
-                logger.info(f"\033[32m Conversion successful! Output file: {output_file}\033[0m")
-                break
-
             # Handle any network related issue gracefully
             except Exception in (ConnectionError, ConnectionAbortedError, ConnectionRefusedError, ConnectionResetError) as e:
                 # or Exception in (requests.exceptions.RequestException) as e:
@@ -119,6 +114,10 @@ connection issue arised: {e} in {attempt+1}/{retries}:")
             logger.error(f"Conversion unsuccessful after {retries} attempts.")
 
     finally:
+        # Combine generated gTTS objects
+        join_audios(ogg_folder, output_file)
+
+        logger.info("\033[32m: Master file: Ok\033[0m")
         st = speedtest.Speedtest()
         logger.info("Done")
         print("Calculating final speed ...")
