@@ -56,8 +56,6 @@ def ocr_text_extraction(image_path, OCR_file):
         logger.error(f"Error: Could not write to output file '{OCR_file}'. Reason: {str(e)}\033[0m")
     except Exception as e:
         logger.error(f"Error: {type(e).__name__}: {str(e)}")
-    except Exception as e:
-        logger.error(f"Error:>>\033[31m{e}\033[0m")
 
     return text
 

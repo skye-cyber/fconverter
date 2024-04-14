@@ -1,6 +1,8 @@
 LICENSE
+MANIFEST.ini
 README.md
 setup.py
+.github/workflows/python-package.yml
 fconverter/EStranslate.py
 fconverter/OCR.py
 fconverter/OCRbanner.py
@@ -22,3 +24,18 @@ fconverter.egg-info/dependency_links.txt
 fconverter.egg-info/entry_points.txt
 fconverter.egg-info/requires.txt
 fconverter.egg-info/top_level.txt
+fconverter/__pycache__/OCR.cpython-311.pyc
+fconverter/__pycache__/__init__.cpython-311.pyc
+fconverter/__pycache__/banner.cpython-311.pyc
+fconverter/__pycache__/docx2pdf.cpython-311.pyc
+fconverter/__pycache__/draft.cpython-311.pyc
+fconverter/__pycache__/eSpeak.cpython-311.pyc
+fconverter/__pycache__/fconverter.cpython-311.pyc
+fconverter/__pycache__/image.cpython-311.pyc
+fconverter/__pycache__/interactive.cpython-311.pyc
+fconverter/__pycache__/mp3.cpython-311.pyc
+fconverter/__pycache__/pyttsx3.cpython-311.pyc
+fconverter/__pycache__/word_to_pdf.cpython-311.pyc
+fconverter/__pycache__/xls2Sql.cpython-311.pyc
+fconverter/__pycache__/xlsx.cpython-311.pyc
+fconverter/__pycache__/xlsx2csv.cpython-311.pyc

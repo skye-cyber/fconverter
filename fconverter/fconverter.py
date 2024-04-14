@@ -34,7 +34,7 @@ def check_if_running_inside_termux():
 
 
 def pdf_to_word(pdf_file, word_file):
-    if os.name == 'posix' or os.name == 'ms-dos':
+    if os.name == 'posix' or os.name == 'nt':
         try:
             from pdf2docx import parse
         except ImportError:
@@ -62,10 +62,10 @@ def pdf_to_word(pdf_file, word_file):
                 # create a blanks document using python-docx
                 doc = Document
                 # Add each page content into the Docx document
-                for i in range(reader.numPages):
+                for i in range(len(reader.pages)):
                     page = reader.getPage(i)
-                    progress_show(reader.getPageNumber, reader.getNumPages)
-                    logger.info(f'\033[32mPage{i}/{reader.numPages}\033[0m')
+                    progress_show(reader.getPageNumber, len(reader.pages))
+                    logger.info(f'\033[32mPage{i}/{len(reader.pages)}\033[0m')
                     text = page.extractText()  # .replace('\r\n', '\n').strip()
                     # para = doc.add_paragraph(text)
                     doc.add_paragraph(text)

@@ -131,7 +131,7 @@ def pdf_to_text(pdf_path):
         with open(pdf_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
             text = ''
-            for page_num in range(pdf_reader.numPages):
+            for page_num in range(len(pdf_reader.pages)):
                 page = pdf_reader.getPage(page_num)
                 text += page.extractText()
             return text
