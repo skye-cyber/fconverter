@@ -63,10 +63,10 @@ def pdf_to_word(pdf_file, word_file):
                 doc = Document
                 # Add each page content into the Docx document
                 for i in range(len(reader.pages)):
-                    page = reader.getPage(i)
-                    progress_show(reader.getPageNumber, len(reader.pages))
+                    page = reader.pages[i]
+                    progress_show(reader.pages[i], len(reader.pages))
                     logger.info(f'\033[32mPage{i}/{len(reader.pages)}\033[0m')
-                    text = page.extractText()  # .replace('\r\n', '\n').strip()
+                    text = page.extract_text()  # .replace('\r\n', '\n').strip()
                     # para = doc.add_paragraph(text)
                     doc.add_paragraph(text)
                 # Save the resulting File
