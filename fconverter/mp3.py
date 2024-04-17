@@ -132,8 +132,8 @@ def pdf_to_text(pdf_path):
         with open(pdf_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
             text = ''
-            for page_num in range(pdf_reader.numPages):
-                page = pdf_reader.getPage(page_num)
+            for page_num in range(pdf_reader.pages):
+                page = pdf_reader.pages(page_num)
                 text += page.extractText()
             return text
     except Exception as e:
@@ -158,7 +158,7 @@ def docx_to_text(docx_path):
 
 def convert_file_to_mp3(input_file, output_file):
     ls = ["doc", "docx"]
-    if input_file.endswith('.pdf'):
+    if input_file.endswith('pdf'):
         try:
             text = pdf_to_text(input_file)
         except FileNotFoundError:
@@ -180,7 +180,7 @@ def convert_file_to_mp3(input_file, output_file):
             logger.exception("Error converting {} to text: {}".format(input_file, str(e)))
             sys.exit(1)
 
-    elif input_file.endswith('.txt'):
+    elif input_file.endswith('txt'):
         try:
             text = text_file(input_file)
         except FileNotFoundError:
